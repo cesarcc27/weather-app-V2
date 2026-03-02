@@ -3,92 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weather PWA v2.0</title>
+    <title>Clima PWA v2.0</title>
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background-color: #1a1a1a; color: white; font-family: sans-serif; }
-        .glass-card {
-            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-            border-radius: 30px;
+        /* Color azul extraído del widget de la imagen */
+        :root {
+            --widget-blue: #5c4df2; 
+        }
+        body { 
+            background-color: #121212; 
+            color: white; 
+            font-family: 'Segoe UI', Roboto, sans-serif; 
+        }
+        .widget-card {
+            background-color: var(--widget-blue);
+            border-radius: 40px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
         }
     </style>
 </head>
-<body class="p-4 flex flex-col min-h-screen">
+<body class="p-6 flex flex-col items-center justify-start min-h-screen">
 
-    <div class="glass-card p-8 shadow-2xl max-w-md mx-auto w-full relative overflow-hidden">
-        <div class="flex justify-between items-start mb-8">
-            <div>
-                <h1 class="text-3xl font-bold">Hoy</h1>
-                <p id="weather-desc" class="mt-4 text-lg opacity-90">Cargando...</p>
-            </div>
-            <p class="text-sm opacity-80" id="current-date"></p>
+    <div class="widget-card p-10 w-full max-w-md aspect-[4/3] flex flex-col justify-between relative overflow-hidden">
+        
+        <div class="flex justify-between items-start z-10">
+            <h1 class="text-4xl font-semibold tracking-tight">Today</h1>
+            <p class="text-xl opacity-90" id="current-date">-- --, 2026</p>
         </div>
 
-        <div class="flex justify-between items-center py-10">
-            <div id="icon-container">
-                <div class="w-24 h-24 bg-white/20 rounded-full blur-xl absolute -left-4"></div>
-                <img src="https://openweathermap.org/img/wn/04d@4x.png" alt="clima" class="w-32 relative z-10">
+        <div class="flex justify-between items-end z-10">
+            <div class="flex flex-col">
+                <div class="relative w-32 h-32 mb-4">
+                    <img src="https://openweathermap.org/img/wn/04d@4x.png" alt="clima" class="w-full drop-shadow-lg">
+                </div>
+                <p id="weather-desc" class="text-2xl font-medium">Broken Clouds</p>
             </div>
-            <div class="text-right">
-                <div class="text-7xl font-light" id="temp-f">--°F</div>
-                <div class="text-4xl font-light opacity-80 mt-2" id="temp-c">--°C</div>
+
+            <div class="text-right leading-none">
+                <div class="text-[90px] font-medium" id="temp-f">45°F</div>
+                <div class="text-[50px] font-light opacity-80 mt-2" id="temp-c">7°C</div>
             </div>
         </div>
 
-        <p class="text-xs opacity-60 mt-4" id="last-updated">Actualizado: hace un momento</p>
-
-        <div id="budget-section" class="hidden mt-6 pt-4 border-t border-white/20">
-            <p class="text-xs uppercase tracking-widest mb-2">Every Dollar Mode</p>
-            <div class="w-full bg-white/20 rounded-full h-4">
-                <div class="bg-green-400 h-4 rounded-full" style="width: 75%"></div>
-            </div>
+        <div class="mt-4 z-10">
+            <p class="text-sm opacity-60" id="last-updated">Last Updated: 3 minutes ago</p>
         </div>
     </div>
 
-    <div class="max-w-md mx-auto w-full mt-6 space-y-4">
-        <div class="bg-gray-800 p-4 rounded-xl flex justify-between items-center">
-            <span>Activar Every Dollar Mode</span>
-            <input type="checkbox" id="toggle-budget" class="w-6 h-6">
-        </div>
-        
-        <div class="bg-gray-800 p-4 rounded-xl">
-            <h3 class="font-bold mb-2 text-sm">Opción 3: Pronóstico Extendido</h3>
-            <div class="flex justify-between text-xs opacity-70">
-                <span>Lun: 42°F</span><span>Mar: 45°F</span><span>Mie: 38°F</span>
+    <div class="w-full max-w-md mt-8 space-y-4">
+        <div class="bg-white/5 backdrop-blur-md p-5 rounded-3xl border border-white/10">
+            <h3 class="text-sm font-bold uppercase tracking-widest text-blue-400 mb-3">Pronóstico Semanal</h3>
+            <div class="flex justify-between text-center">
+                <div><p class="text-xs opacity-50">LUN</p><p class="font-bold">42°</p></div>
+                <div><p class="text-xs opacity-50">MAR</p><p class="font-bold">45°</p></div>
+                <div><p class="text-xs opacity-50">MIE</p><p class="font-bold">38°</p></div>
+                <div><p class="text-xs opacity-50">JUE</p><p class="font-bold">40°</p></div>
+                <div><p class="text-xs opacity-50">VIE</p><p class="font-bold">44°</p></div>
             </div>
         </div>
 
-        <div class="bg-gray-800 p-4 rounded-xl border-l-4 border-yellow-500">
-            <h3 class="font-bold text-sm text-yellow-500">Opción 4: Alertas Activas</h3>
-            <p class="text-xs">No hay alertas climáticas en tu zona.</p>
+        <div class="bg-yellow-500/10 p-5 rounded-3xl border border-yellow-500/20 flex items-center gap-4">
+            <div class="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+            <p class="text-sm text-yellow-200/80">No se detectan alertas climáticas activas.</p>
         </div>
     </div>
 
     <script>
-        // Lógica de Fecha
-        document.getElementById('current-date').innerText = new Date().toLocaleDateString('es-ES', { 
-            month: 'long', day: 'numeric', year: 'numeric' 
-        });
+        // Fecha Automática
+        const options = { month: 'long', day: 'numeric', year: 'numeric' };
+        document.getElementById('current-date').innerText = new Date().toLocaleDateString('en-US', options);
 
-        // Simulación de datos (En un caso real usarías fetch a OpenWeather API)
-        function updateWeather() {
-            const f = 45;
-            const c = Math.round((f - 32) * 5 / 9);
-            document.getElementById('temp-f').innerText = `${f}°F`;
-            document.getElementById('temp-c').innerText = `${c}°C`;
-            document.getElementById('weather-desc').innerText = "Nubes Dispersas";
-        }
-
-        // Option 1 Logic
-        document.getElementById('toggle-budget').addEventListener('change', (e) => {
-            const section = document.getElementById('budget-section');
-            section.classList.toggle('hidden', !e.target.checked);
-        });
-
-        updateWeather();
-
-        // Registrar Service Worker
+        // Registro de Service Worker para PWA
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js');
         }
